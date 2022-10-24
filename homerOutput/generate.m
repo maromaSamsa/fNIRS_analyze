@@ -20,7 +20,7 @@ function [res_motion,res_mirror] = generate(packagePath, condition)
     for i = 1:length(res.motion)
         HRF = dcAvg(:,signal_type, channel.motion(i), condition);
         for dt = timeRange(1):timeRange(2)
-            res.motion(i) = res.motion(1) + HRF(dt);
+            res.motion(i) = res.motion(i) + HRF(dt);
         end
         res.motion(i) = res.motion(i)/sampling_rate;
     end
@@ -28,7 +28,7 @@ function [res_motion,res_mirror] = generate(packagePath, condition)
     for i = 1:length(res.mirror)
         HRF = dcAvg(:,signal_type, channel.mirror(i), condition);
         for dt = timeRange(1):timeRange(2)
-            res.mirror(i) = res.mirror(1) + HRF(dt);
+            res.mirror(i) = res.mirror(i) + HRF(dt);
         end
         res.mirror(i) = res.mirror(i)/sampling_rate;
     end
