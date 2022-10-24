@@ -1,4 +1,4 @@
-function [res_motion,res_mirror] = generate(packagePath, condition)
+function [res_motion,res_mirror] = generate(packagePath, condition, rank)
 
     %% load subject data
     load(packagePath);
@@ -18,26 +18,22 @@ function [res_motion,res_mirror] = generate(packagePath, condition)
     res.mirror = zeros(length(channel.motion), 1);
     
     for i = 1:length(res.motion)
-        HRF = dcAvg(:,signal_type, channel.motion(i), condition);
+        HRF_motion = dcAvg(:,signal_type, channel.motion(i), condition);
+        HRF_mirror = dcAvg(:,signal_type, channel.mirror(i), condition);
         for dt = timeRange(1):timeRange(2)
-            res.motion(i) = res.motion(i) + HRF(dt);
+            res.motion(i) = res.motion(i) + HRF_motion(dt);
+            res.mirror(i) = res.mirror(i) + HRF_mirror(dt);
         end
         res.motion(i) = res.motion(i)/sampling_rate;
-    end
-    
-    for i = 1:length(res.mirror)
-        HRF = dcAvg(:,signal_type, channel.mirror(i), condition);
-        for dt = timeRange(1):timeRange(2)
-            res.mirror(i) = res.mirror(i) + HRF(dt);
-        end
         res.mirror(i) = res.mirror(i)/sampling_rate;
     end
 
-%% choose max 4 value
+%% choose big value
     sampleList = [res.motion, res.motion, res.mirror];
     sampleList = sortrows(sampleList, 1, "descend");
-    res.motion = sampleList(1:4,2);
-    res.mirror = sampleList(1:4,3);
+    res.motion = sampleList(1:rank,2);
+    res.mirror = sampleList(1:rank,3);
+    clear sampleList;
 %% return 
     res_motion = res.motion;
     res_mirror = res.mirror;
