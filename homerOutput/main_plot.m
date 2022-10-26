@@ -10,19 +10,20 @@ motion = [];
 mirror = [];
 for i = 1:length(data)
     pathName = fullfile(dirName, data(i).name);
-    [mo, mi] = generate(pathName, 1);
+    [mo, mi] = generate(pathName, 2, 3);
     motion = [motion; mo];
     mirror = [mirror; mi];
 end
 
 clear mo  mi;
 
-%% plot
+%% quick look of result
 I = sum( (motion > 0)&(mirror > 0) );
 II = sum( (motion < 0)&(mirror > 0) );
 III = sum( (motion < 0)&(mirror < 0) );
 IV = sum( (motion > 0)&(mirror < 0) );
 
+%% plot
 b = polyfit(motion, mirror, 1);
 R = corrcoef(motion, mirror);
 xfit = linspace(min(motion), max(motion));
@@ -40,5 +41,5 @@ plot(xfit, yfit, 'Color', 'k', 'LineWidth', 1);
 plot(xfit, yfit, 'Color', 'k', 'LineWidth', 1);
 legend('Symmetrical channels', 'regression');
 
-f_str = "slope = " + num2str(round(b(1),2));
+f_str = newline + "slope = " + num2str(round(b(1),2)) + newline + "offset = " + num2str(b(2));
 text(2*xfit(end)/3, 2*yfit(end)/3, f_str);
